@@ -1,0 +1,38 @@
+{
+	"logDir": "/var/log/mydump",
+	"smtp": {
+		"address": "127.0.0.1",
+		"port": "25",
+		"useTls": false,
+		"user": "user",
+		"password": "123",
+		"subject": "[BACKUP] MySQL dump report",
+		"sender": "backup@example.com",
+		"receivers": [ "john@example.com" ]
+	},
+	"destination": "/var/backups/mysql",
+	"dstPerm": {
+		"user": "operator",
+		"group": "disk"
+	},
+	"jobs": [
+		{
+			"name": "job-server1",
+			"database": {
+				"hostname": "server1.example.com",
+				"user": "user",
+				"password": "123",
+				"filter": "+all -db5"
+			}
+		},
+		{
+			"name": "job-server2",
+			"database": {
+				"hostname": "server2.example.com",
+				"user": "user",
+				"password": "123",
+				"filter": "+db3 +db4"
+			}
+		}
+	]
+}
