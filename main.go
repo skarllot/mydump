@@ -18,8 +18,11 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
+
 	"github.com/skarllot/mydump/config"
 )
 
@@ -33,12 +36,49 @@ func main() {
 		fmt.Println("Could not load configuration file:", err)
 		return
 	}
-	
+
 	cfg := &config.Config{}
 	if err := json.Unmarshal(content, cfg); err != nil {
 		fmt.Println("Invalid configuration file:", err)
 		return
 	}
+
+	if b, err := pathExists(cfg.Destination); !b {
+		if err != nil {
+			fmt.Println("Could not stat destination directory:", err)
+			return
+		}
+		if err := os.MkdirAll(cfg.Destination, 0750); err != nil {
+			fmt.Println("Could not create destination directory:", err)
+			return
+		}
+	}
+
+	for _, job := range cfg.Jobs {
+		dstPath := path.Join(cfg.Destination, job.Database.Hostname)
+		if b, err := pathExists(dstPath); !b {
+			if err != nil {
+				fmt.Println("Could not stat destination directory:", err)
+				return
+			}
+			if err := os.Mkdir(dstPath, 0750); err != nil {
+				fmt.Println("Could not create destination directory:", err)
+				return
+			}
+		}
+	}
 	
-	fmt.Printf("%#v\n", cfg)
+	fmt.Println("End")
+}
+
+func pathExists(p string) (bool, error) {
+	_, err := os.Stat(p)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	return false, err
 }
