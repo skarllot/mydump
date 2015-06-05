@@ -17,9 +17,28 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"fmt"
+	"github.com/skarllot/mydump/config"
+)
+
+const (
+	CONFIG_FILE_NAME = "config.json"
 )
 
 func main() {
-	fmt.Println("Hello World!")
+	content, err := ioutil.ReadFile(CONFIG_FILE_NAME)
+	if err != nil {
+		fmt.Println("Could not load configuration file:", err)
+		return
+	}
+	
+	cfg := &config.Config{}
+	if err := json.Unmarshal(content, cfg); err != nil {
+		fmt.Println("Invalid configuration file:", err)
+		return
+	}
+	
+	fmt.Printf("%#v\n", cfg)
 }

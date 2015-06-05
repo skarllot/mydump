@@ -2,7 +2,7 @@
 	"logDir": "/var/log/mydump",
 	"smtp": {
 		"address": "127.0.0.1",
-		"port": "25",
+		"port": 25,
 		"useTls": false,
 		"user": "user",
 		"password": "123",
